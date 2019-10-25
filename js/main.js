@@ -1,41 +1,48 @@
 // constants
-const maxTurns = 9;
+//const maxTurns = 9;
 
 //state variables
 var currentBoard;
 var whoseTurn; //1 is x or -1 is o 
-
+var playerLetter;
+var winner;
 
 //cached elements
 boardEl = document.querySelector('.board');
 resetBtn = document.querySelector('button');
 boardSpaces = document.querySelectorAll('div');
 messageEl = document.querySelector('h2');
+playerTurnEl = document.querySelector('h3');
 
 //event listeners
 boardEl.addEventListener('click', boardClickEventHandler);
 resetBtn.addEventListener('click', resetButtonEventHandler);
 
-
-
 //functions
 function init() {
+    winner = false;
     messageEl.textContent = "";
     currentBoard = [];
     for (let i=0; i<3;i++){
-        let intermediateBoard = [];
+        let rows = [];
         for (let j=0;j<3;j++){
-            intermediateBoard.push(0);
+            rows.push(0);
         }
-        currentBoard.push(intermediateBoard);
+        currentBoard.push(rows);
     }
     whoseTurn = 1;
     render();
+    playerLetter = (whoseTurn === 1) ? 'O':'X';
+    playerTurnEl.textContent = `${playerLetter} goes first`;
 }
 
+
 function boardClickEventHandler(evt) {
+    //handle if clicked already market box or outside of box
     if (evt.target.tagName == 'section') {return;}
-    if (evt.target.classList.contains('x') || evt.target.classList.contains('o')) {return;}
+    if (evt.target.classList.contains('x') || 
+        evt.target.classList.contains('o') ||
+        winner) {return;}
     
     //update current board
     let row = parseInt(evt.target.dataset.row);
@@ -43,12 +50,14 @@ function boardClickEventHandler(evt) {
     currentBoard[row][col] = whoseTurn;
     
     //update player turn
+    checkWinner();
     whoseTurn = whoseTurn * -1;
     render();
 }
 
+// Move Model state to UI
 function render() {
-    //turn current board on screen (-1 = x, 1 = o)
+    //turn current board on screen (-1 = x player, 1 = o polayer)
     boardSpaces.forEach(function(boardSpace){
         let row = boardSpace.dataset.row;
         let col = boardSpace.dataset.column;
@@ -60,9 +69,12 @@ function render() {
             boardSpace.setAttribute('class','x');
         }
     });
+    playerLetter = (whoseTurn === 1) ? 'O':'X';
+    playerTurnEl.textContent = `${playerLetter}'s turn`;
+}
 
+function checkWinner() {
     //sum rows/columns/diagonals and pushes them to an array to be check for winner
-    //check rows
     let sums = [];
     let col0Sum = 0;
     let col1Sum = 0;
@@ -88,23 +100,28 @@ function render() {
     let cross2 = currentBoard[2][0] + currentBoard[1][1] + currentBoard[0][2];
     sums.push(cross1);
     sums.push(cross2);
-
-    //
-    checkWinner(sums);
-}
-
-function checkWinner(sums) {
-    sums.forEach(function(num){
-        if (num < -2) {
-        messageEl.textContent = `X wins. Congratulations!!!!`;
-        // display reset
-        return;
-    } else if ( num > 2) {
-        messageEl.textContent = `O wins. Congratulations!!!!`;
-        //display reset
-        return;
+    
+    //display winner message
+    for (let i = 0; i < sums.length; i++) {
+        if (sums[i] < -2) {
+            messageEl.textContent = `X wins. Congratulations!!!!`;
+            winner = true;
+            break;
+        } else if ( sums[i] > 2) {
+            messageEl.textContent = `O wins. Congratulations!!!!`;
+            winner = true;
+            break;
+        } 
     }
-    });
+    console.log('did we break;');
+    // Check Cat's game
+    // let catsGame = true;
+    // boardSpaces.forEach(function(boardSpace){
+    //     if (boardSpace.classList.contains('x') || 
+    //         boardSpace.classList.contains('o')) {
+    //             catsGame = false;
+    //         }
+    // });
 }
 
 function resetButtonEventHandler(evt) {
