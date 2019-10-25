@@ -1,0 +1,36 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --accent-dark: #BB4C3A;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+section {
+    margin: 2%;
+    background-image: url("../images/gameboard.png");
+    width: 235px;
+    height: 210px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+
+div.x {
+    background-image: url("../images/X.png");
+    background-size: 100%;
+    cursor: not-allowed;
+}
+
+div.o {
+    background-image: url("../images/O.png");
+    background-size: 100%;
+    cursor: not-allowed;
+    
+}
