@@ -75,6 +75,8 @@ function render() {
 
 function checkWinner() {
     //sum rows/columns/diagonals and pushes them to an array to be check for winner
+    //also check's for Cat game
+    let allBoxesFilled = true;
     let sums = [];
     let col0Sum = 0;
     let col1Sum = 0;
@@ -86,6 +88,8 @@ function checkWinner() {
         col1Sum = col1Sum + row[1];
         col2Sum = col2Sum + row[2];
         row.forEach(function(rowNums){
+            //check if any empty boxes left
+            if (rowNums == 0 && allBoxesFilled) {allBoxesFilled = false;}
             //sums rows
             rowSum = rowSum+rowNums;
         });
@@ -113,15 +117,10 @@ function checkWinner() {
             break;
         } 
     }
-    console.log('did we break;');
-    // Check Cat's game
-    // let catsGame = true;
-    // boardSpaces.forEach(function(boardSpace){
-    //     if (boardSpace.classList.contains('x') || 
-    //         boardSpace.classList.contains('o')) {
-    //             catsGame = false;
-    //         }
-    // });
+    if (allBoxesFilled && !winner) {
+        messageEl.textContent = `Cat's Game. Try Again?`;
+        playerTurnEl.textContent = "";
+    }
 }
 
 function resetButtonEventHandler(evt) {
